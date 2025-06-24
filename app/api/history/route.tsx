@@ -23,16 +23,22 @@ export async function POST (req: NextRequest) {
 }
 
 
-export async function PUT(req:NextRequest) {
-    const {content, recordId} = await req.json()
-    try {
-        const result = await db.update(HistoryTable).set({
-            content: content,
-        }).where(eq(HistoryTable.recordId, recordId))
-    } catch (error) {
-        return NextResponse.json(error)
-    }
+export async function PUT(req: NextRequest) {
+  const { content, recordId } = await req.json();
+
+  try {
+    const result = await db
+      .update(HistoryTable)
+      .set({ content })
+      .where(eq(HistoryTable.recordId, recordId));
+
+    // ✅ Return success response
+    return NextResponse.json({ message: "Update successful", result });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
 }
+
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
