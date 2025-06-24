@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { inngest } from "@/inngest/client";
-import axios from "axios";
 import { currentUser } from "@clerk/nextjs/server";
+import { getRuns } from "@/lib/inngest/getRuns";
 
 export async function POST(req:NextRequest) {
     const FormData = await req.formData()
@@ -39,16 +39,4 @@ export async function POST(req:NextRequest) {
     }
 
     return NextResponse.json("success")
-}
- 
-export async function getRuns(runId: string) {
-    const result = await axios.get(
-        `${process.env.INNGEST_SERVER_HOST}/v1/events/${runId}/runs`,
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.INNGEST_SIGNING_KEY}`
-            }
-        }
-    );
-    return result.data;
 }
