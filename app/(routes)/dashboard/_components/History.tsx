@@ -58,7 +58,7 @@ const History = () => {
             return (
               <Link
                 key={history.recordId}
-                href={`/${history.aiAgentType}/${history.recordId}`}
+                href={`${history.aiAgentType}/${history.recordId}`}
                 className='flex justify-between items-center p-3 rounded-xl border hover:bg-muted transition-all'
               >
                 <div className='flex gap-5 items-center'>
