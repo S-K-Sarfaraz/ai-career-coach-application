@@ -19,7 +19,7 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
   const [file, setFile] = useState<any>()
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  
+  const { has } = useAuth()
 
   const onFileChange = (event: any) => {
     const file = event.target.files?.[0]
@@ -33,12 +33,11 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
     setLoading(true)
     const recordId = uuidv4()
     const formData = new FormData()
-    const { has } =await useAuth()
     formData.append('recordId', recordId)
     formData.append('resumeFile', file)
 
     // @ts-ignore
-    const hasSubscriptionEnabled = has({ plan: 'pro'})
+    const hasSubscriptionEnabled = await has({ plan: ['pro', 'premium'] }) // or something similar if supported.
     if (!hasSubscriptionEnabled) {
       const resultHistory = await axios.get('/api/history')
       const historyList = resultHistory.data
