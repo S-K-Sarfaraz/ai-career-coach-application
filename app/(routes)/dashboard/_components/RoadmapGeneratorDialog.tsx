@@ -29,16 +29,17 @@ const RoadmapGeneratorDialog = ({ openDialog, setOpenDialog, onGenerateComplete 
     setLoading(true)
     try {
       // @ts-ignore
-      const hasSubscriptionEnabled = await has({plan: 'pro', plan: 'premium'})
-        if (!hasSubscriptionEnabled) {
-          const resultHistory = await axios.get('/api/history')
-            const historyList = resultHistory.data
-            const isPresent = await historyList.find((item:any)=>item.aiAgentType=="/ai-tools/ai-roadmap-agent")
-            router.push('/billing')
-            if(isPresent){
-              return null
-            }
-          }
+      // const hasSubscriptionEnabled = await has({ plan: ['pro', 'premium'] }) // or something similar if supported.
+
+      //   if (!hasSubscriptionEnabled) {
+      //     const resultHistory = await axios.get('/api/history')
+      //       const historyList = resultHistory.data
+      //       const isPresent = await historyList.find((item:any)=>item.aiAgentType=="/ai-tools/ai-roadmap-agent")
+      //       router.push('/billing')
+      //       if(isPresent){
+      //         return null
+      //       }
+      //     }
       const result = await axios.post("/api/ai-roadmap-agent", {
         roadmapId: roadmapId,
         userInput: userInput,
