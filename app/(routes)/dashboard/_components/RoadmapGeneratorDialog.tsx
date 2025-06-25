@@ -23,13 +23,13 @@ const RoadmapGeneratorDialog = ({ openDialog, setOpenDialog, onGenerateComplete 
   const [userInput, setUserInput] = useState<string>()
   const [loading, setLoading]= useState<boolean>(false)
   const router = useRouter()
-  const {has} = useAuth()
-
+  
   const GenerateRoadmap = async () => {
     setLoading(true)
     try {
+      const {has} = useAuth()
       // @ts-ignore
-      const hasSubscriptionEnabled = await has({plan: 'pro', plan: 'premium'})
+      const hasSubscriptionEnabled = has({plan: 'pro'})
         if (!hasSubscriptionEnabled) {
           const resultHistory = await axios.get('/api/history')
             const historyList = resultHistory.data

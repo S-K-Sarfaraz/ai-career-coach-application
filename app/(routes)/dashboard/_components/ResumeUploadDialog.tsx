@@ -38,7 +38,7 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
     formData.append('resumeFile', file)
 
     // @ts-ignore
-    const hasSubscriptionEnabled =  has({ plan: 'pro'})
+    const hasSubscriptionEnabled = has({ plan: 'pro'})
     if (!hasSubscriptionEnabled) {
       const resultHistory = await axios.get('/api/history')
       const historyList = resultHistory.data
