@@ -14,6 +14,8 @@ import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
+import { toast } from 'sonner'
+
 
 const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
   const [file, setFile] = useState<any>()
@@ -30,39 +32,43 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
   }
 
   const onUploadAndAnalyze = async () => {
-    setLoading(true)
-    const recordId = uuidv4()
-    const formData = new FormData()
-    formData.append('recordId', recordId)
-    formData.append('resumeFile', file)
-    // @ts-ignore
-      const hasProSubscriptionEnabled = await has({ plan: 'pro' }) // or something similar if supported.
-      // @ts-ignore
-      const hasPremiumSubscriptionEnabled = await has({ plan: 'premium' }) // or something similar if supported.
+  setLoading(true)
+  const recordId = uuidv4()
+  const formData = new FormData()
+  formData.append('recordId', recordId)
+  formData.append('resumeFile', file)
 
+  try {
     // @ts-ignore
-    // const hasSubscriptionEnabled = await has({ plan: ['pro', 'premium'] }) // or something similar if supported.
-    // if (!hasSubscriptionEnabled) {
-    //   const resultHistory = await axios.get('/api/history')
-    //   const historyList = resultHistory.data
-    //   const isPresent = await historyList.find((item:any)=>item.aiAgentType=="/ai-tools/ai-resume-analyzer")
-    //   router.push('/billing')
-    //   if(isPresent){
-    //     return null
-    //   }
-    // }
+    const hasProSubscriptionEnabled = await has({ plan: 'pro' })
+    // @ts-ignore
+    const hasPremiumSubscriptionEnabled = await has({ plan: 'premium' })
 
     if (!hasProSubscriptionEnabled && !hasPremiumSubscriptionEnabled) {
-          router.push('/billing')
-          return
-        }
+      router.push('/billing')
+      return
+    }
 
     const result = await axios.post("/api/ai-resume-analyzer", formData)
+
+    if (result.status === 500) {
+      throw new Error('Internal Server Error')
+    }
+
     console.log(result.data)
-    setLoading(false)
     router.push(`/ai-tools/ai-resume-analyzer/${recordId}`)
     setOpenResumeDialog(false)
+  } catch (error: any) {
+    console.error("Error uploading resume:", error)
+    
+    setOpenResumeDialog(false)  // close the dialog box
+    
+    toast.error("Resume analysis failed. Please try again later.")  // show error toast
+  } finally {
+    setLoading(false)
   }
+}
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' && file && !loading) {
