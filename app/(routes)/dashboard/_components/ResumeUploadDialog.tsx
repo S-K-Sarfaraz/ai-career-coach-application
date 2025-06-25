@@ -35,6 +35,10 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
     const formData = new FormData()
     formData.append('recordId', recordId)
     formData.append('resumeFile', file)
+    // @ts-ignore
+      const hasProSubscriptionEnabled = await has({ plan: 'pro' }) // or something similar if supported.
+      // @ts-ignore
+      const hasPremiumSubscriptionEnabled = await has({ plan: 'premium' }) // or something similar if supported.
 
     // @ts-ignore
     // const hasSubscriptionEnabled = await has({ plan: ['pro', 'premium'] }) // or something similar if supported.
@@ -47,6 +51,11 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
     //     return null
     //   }
     // }
+
+    if (!hasProSubscriptionEnabled && !hasPremiumSubscriptionEnabled) {
+          router.push('/billing')
+          return
+        }
 
     const result = await axios.post("/api/ai-resume-analyzer", formData)
     console.log(result.data)
