@@ -32,42 +32,39 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
   }
 
   const onUploadAndAnalyze = async () => {
-  setLoading(true)
-  const recordId = uuidv4()
-  const formData = new FormData()
-  formData.append('recordId', recordId)
-  formData.append('resumeFile', file)
+    setLoading(true)
+    const recordId = uuidv4()
+    const formData = new FormData()
+    formData.append('recordId', recordId)
+    formData.append('resumeFile', file)
 
-  try {
-    // @ts-ignore
-    const hasProSubscriptionEnabled = await has({ plan: 'pro' })
-    // @ts-ignore
-    const hasPremiumSubscriptionEnabled = await has({ plan: 'premium' })
+    try {
+      // @ts-ignore
+      const hasProSubscriptionEnabled = await has({ plan: 'pro' })
+      // @ts-ignore
+      const hasPremiumSubscriptionEnabled = await has({ plan: 'premium' })
 
-    if (!hasProSubscriptionEnabled && !hasPremiumSubscriptionEnabled) {
-      router.push('/billing')
-      return
+      if (!hasProSubscriptionEnabled && !hasPremiumSubscriptionEnabled) {
+        router.push('/billing')
+        return
+      }
+
+      const result = await axios.post("/api/ai-resume-analyzer", formData)
+
+      // Successful analysis
+      router.push(`/ai-tools/ai-resume-analyzer/${recordId}`)
+      setOpenResumeDialog(false)
+    } catch (error: any) {
+      console.error("Resume analysis error:", error)
+
+      // Close dialog and show error toast for ANY failure
+      setOpenResumeDialog(false)
+
+      toast.error("Resume analysis failed. Please try again later.")
+    } finally {
+      setLoading(false)
     }
-
-    const result = await axios.post("/api/ai-resume-analyzer", formData)
-
-    if (result.status === 500) {
-      throw new Error('Internal Server Error')
-    }
-
-    console.log(result.data)
-    router.push(`/ai-tools/ai-resume-analyzer/${recordId}`)
-    setOpenResumeDialog(false)
-  } catch (error: any) {
-    console.error("Error uploading resume:", error)
-    
-    setOpenResumeDialog(false)  // close the dialog box
-    
-    toast.error("Resume analysis failed. Please try again later.")  // show error toast
-  } finally {
-    setLoading(false)
   }
-}
 
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
