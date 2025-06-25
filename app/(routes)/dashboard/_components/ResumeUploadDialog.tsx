@@ -37,16 +37,16 @@ const ResumeUploadDialog = ({ openResumeUpload, setOpenResumeDialog }: any) => {
     formData.append('resumeFile', file)
 
     // @ts-ignore
-    const hasSubscriptionEnabled = await has({ plan: 'pro', plan: 'premium' })
-    if (!hasSubscriptionEnabled) {
-      const resultHistory = await axios.get('/api/history')
-      const historyList = resultHistory.data
-      const isPresent = await historyList.find((item:any)=>item.aiAgentType=="/ai-tools/ai-resume-analyzer")
-      router.push('/billing')
-      if(isPresent){
-        return null
-      }
-    }
+    // const hasSubscriptionEnabled = await has({ plan: 'pro', plan: 'premium' })
+    // if (!hasSubscriptionEnabled) {
+    //   const resultHistory = await axios.get('/api/history')
+    //   const historyList = resultHistory.data
+    //   const isPresent = await historyList.find((item:any)=>item.aiAgentType=="/ai-tools/ai-resume-analyzer")
+    //   router.push('/billing')
+    //   if(isPresent){
+    //     return null
+    //   }
+    // }
 
     const result = await axios.post("/api/ai-resume-analyzer", formData)
     console.log(result.data)
